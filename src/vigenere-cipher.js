@@ -19,16 +19,47 @@ const { NotImplementedError } = require('../extensions/index.js');
  * reverseMachine.decrypt('AEIHQX SX DLLU!', 'alphonse') => '!NWAD TA KCATTA'
  * 
  */
+
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(direct = true) {
+    this.direct = direct;
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  encrypt(str, key) {
+    if (str == undefined || key == undefined) throw new Error('Incorrect arguments!');
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    str = str.toUpperCase();
+    key = key.toUpperCase();
+    let encrypted = '';
+    for (let i = 0, j = 0; i < str.length; i++, j++) {
+      if (j == key.length) j = 0;
+      if (chars.indexOf(str[i]) != -1) {
+        encrypted += chars[(chars.indexOf(str[i]) + chars.indexOf(key[j])) % chars.length];
+      } else {
+        encrypted += str[i];
+        j--;
+      }
+    }
+    return this.direct ? encrypted : encrypted.split('').reverse().join('');
+  }
+  decrypt(str, key) {
+    if (str == undefined || key == undefined) throw new Error('Incorrect arguments!');
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    str = str.toUpperCase();
+    key = key.toUpperCase();
+    let decrypted = '';
+    for (let i = 0, j = 0; i < str.length; i++, j++) {
+      if (j == key.length) j = 0;
+      if (chars.indexOf(str[i]) != -1) {
+        decrypted += chars[(26 + chars.indexOf(str[i]) - chars.indexOf(key[j])) % chars.length];
+      } else {
+        decrypted += str[i];
+        j--;
+      }
+    }
+    return this.direct ? decrypted : decrypted.split('').reverse().join('');
   }
 }
+
 
 module.exports = {
   VigenereCipheringMachine
